@@ -1,0 +1,23 @@
+
+.container-fluid{
+  min-height: 100vh;
+  background-color: #AFEEEE;
+}
+.display-img{
+  height: 250px;
+}
+.pointer {cursor: pointer;}
+.nav-active-color{
+  color: rgba(255, 255, 255, 1.0);
+}
+.nav-active-color:hover{
+  color: rgba(255, 255, 255, 1.0);
+}
+.nav-color:hover{
+  color: rgba(255, 255, 255, 0.75);
+}
+.nav-color {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+@import '../../../node_modules/bootstrap/scss/bootstrap.scss';
