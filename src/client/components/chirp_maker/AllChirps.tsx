@@ -32,7 +32,6 @@ const AllChirps: React.FC<AllChirpProps> = (props) => {
             });
             let chirpMore = await res.json();
             let chirpObj: Chirp[] = [];
-
             for (const chirp in chirpMore) {
                 if (!chirp.includes("nextid")) {
                     chirpObj.push({
@@ -45,8 +44,11 @@ const AllChirps: React.FC<AllChirpProps> = (props) => {
                 }
             }
             setChirp(chirpObj);
+            if (chirpObj !== undefined) {
             if (chirpObj.length > 0) setChirps(true);
             else setChirps(false);
+        }
+
         } catch (e) {
             console.log(e.message);
         }
