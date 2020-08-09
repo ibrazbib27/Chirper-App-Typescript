@@ -47,7 +47,7 @@ const App: React.FC<IAppProps> = (props) => {
 									<Row
 										id={"chirps"}
 										className={
-											"justify-content-center justify-content-lg-around mt-5 py-5"
+											"justify-content-center justify-content-lg-around mt-5 py-5 w-100"
 										}
 									>
 										<AllChirps />
