@@ -22,8 +22,8 @@ const AllChirps: React.FC<AllChirpProps> = (props) => {
         ],
         button: true,
     };
-    let setChirps = async (bool: boolean) => {
-        setChirpBool(await bool);
+    let setChirps = (bool: boolean) => {
+        setChirpBool(bool);
     };
     let getChirps = async () => {
         try {
