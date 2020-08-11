@@ -9,7 +9,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-export interface IAppProps {}
+export interface AppProps {}
 
 export interface Chirp {
 	id: string;
@@ -24,7 +24,7 @@ export interface JumbotronText {
 	button: boolean;
 }
 
-const App: React.FC<IAppProps> = (props) => {
+const App: React.FC<AppProps> = (props) => {
 	const jumbotronText: JumbotronText = {
 		header: "Who Are We?",
 		body: [
