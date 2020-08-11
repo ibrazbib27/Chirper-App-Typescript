@@ -15,6 +15,7 @@ import Col from "react-bootstrap/Col";
 import InputGroup from "react-bootstrap/InputGroup";
 import Tooltip from "react-bootstrap/Tooltip";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import htmlString = JQuery.htmlString;
 
 export interface NewChirpProps
     extends RouteComponentProps<{ id: null | string }> {}
@@ -66,18 +67,27 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
         _created: "",
     });
     const [validated, setValidated] = useState(false);
+    const [charChange, setCharChange] = useState<boolean | null>(null);
     const isValidated = () => setValidated(true);
     const formElement: HTMLFormElement = document.getElementById(
         "chirp_form"
     ) as HTMLFormElement;
-    const messageElement: HTMLTextAreaElement = document.getElementById(
-        "message"
-    ) as HTMLTextAreaElement;
-    let messageLength: number;
-    if (messageElement !== null) messageLength = messageElement.value.length;
-    else messageLength = 0;
-    const STARTING_LENGTH = 1000 - messageLength;
-    const [textLength, setTextLength] = useState(STARTING_LENGTH);
+    const [textLength, setTextLength] = useState(1000);
+    $(document).ready(function () {
+        $("#message").val().toString();
+        if (props.match.params.id) {
+            setTextLength(1000 - $("#message").val().toString().length);
+            setCharChange(true);
+        }
+
+        if (window.location.pathname === "/chirp/add") {
+            if (charChange === true) {
+                $("#message").val("");
+                setTextLength(1000);
+                setCharChange(false);
+            }
+        }
+    });
 
     let getChirp = async () => {
         try {
@@ -127,18 +137,16 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
     };
     const findInvalid = () => {
         $(document).ready(function () {
-            $('.form-control:invalid')[0].focus();
+            $(".form-control:invalid")[0].focus();
         });
-    }
+    };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         e.stopPropagation();
         if (e.currentTarget.checkValidity() === true) {
             if (props.match.params.id === undefined) postFunc();
-        }
-        else
-            findInvalid();
+        } else findInvalid();
 
         isValidated();
     };
