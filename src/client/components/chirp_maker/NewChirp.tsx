@@ -67,26 +67,11 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
         _created: "",
     });
     const [validated, setValidated] = useState(false);
-    const [charChange, setCharChange] = useState<boolean | null>(null);
     const isValidated = () => setValidated(true);
     const formElement: HTMLFormElement = document.getElementById(
         "chirp_form"
     ) as HTMLFormElement;
     const [textLength, setTextLength] = useState(1000);
-    $(document).ready(function () {
-
-        if (window.location.pathname === "/chirp/add"){
-            if(charChange === true) {
-                $("#title").val('');
-                $("#message").val('');
-                setTextLength(1000);
-                setCharChange(false);
-            }
-        }
-        else
-            setCharChange(true);
-
-    });
 
     let getChirp = async () => {
         try {
@@ -109,7 +94,6 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
     };
     useEffect(() => {
         if (props.match.params.id) getChirp();
-
     }, []);
 
     let handleUpload = () => {
@@ -133,9 +117,10 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
 
         return false;
     };
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.FormEvent<HTMLTextAreaElement>) => {
         setTextLength(1000 - e.currentTarget.value.length);
     };
+
     const findInvalid = () => {
         $(document).ready(function () {
             $(".form-control:invalid")[0].focus();
@@ -300,7 +285,7 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
                                         defaultValue={
                                             props.match.params.id === undefined ? "" : chirp.message
                                         }
-                                        onChange={handleChange}
+                                        onInput={handleChange}
                                         name={"message"}
                                         className={"shadow-sm"}
                                         id={"message"}
@@ -309,7 +294,6 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
                                     />
                                 </OverlayTrigger>
                                 <Form.Text className={"font-italic small text-left"} muted>
-
                                     You have {textLength} characters left.
                                 </Form.Text>
                                 <Form.Control.Feedback type="invalid" className={"text-left"}>
