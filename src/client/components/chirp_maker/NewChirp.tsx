@@ -1,8 +1,8 @@
 import * as React from "react";
+import { useEffect, useState } from "react";
 import * as moment from "moment";
 
 import * as $ from "jquery";
-import { useState, useEffect } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Chirp } from "../App";
 import ModalConfirmation from "../modal/ModalConfirmation";
@@ -23,10 +23,12 @@ export interface ModalObj {
     header: string;
     body: string;
 }
+
 const NewChirp: React.FC<NewChirpProps> = (props) => {
     const renderTooltipTitle = (props: any) => (
         <Tooltip id="button-tooltip_title" {...props}>
-            Enter chirp title here
+            Enter chirp title here. The title must not be left blank and cannot exceed
+            40 characters.
         </Tooltip>
     );
     const renderTooltipImg = (props: any) => (
@@ -40,7 +42,8 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
     );
     const renderTooltipMes = (props: any) => (
         <Tooltip id="button-tooltip_mes" {...props}>
-            Enter chirp message here
+            Enter chirp message here. The message must not be left blank and cannot
+            exceed 1000 characters.
         </Tooltip>
     );
 
@@ -62,6 +65,20 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
         message: "",
         _created: "",
     });
+    const [validated, setValidated] = useState(false);
+    const isValidated = () => setValidated(true);
+    const formElement: HTMLFormElement = document.getElementById(
+        "chirp_form"
+    ) as HTMLFormElement;
+    const messageElement: HTMLTextAreaElement = document.getElementById(
+        "message"
+    ) as HTMLTextAreaElement;
+    let messageLength: number;
+    if (messageElement !== null) messageLength = messageElement.value.length;
+    else messageLength = 0;
+    const STARTING_LENGTH = 1000 - messageLength;
+    const [textLength, setTextLength] = useState(STARTING_LENGTH);
+
     let getChirp = async () => {
         try {
             let res = await fetch(`/api/${props.match.params.id}/admin`, {
@@ -98,15 +115,24 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
             imgUrl.value.endsWith(".png")
         )
             img.src = imgUrl.value;
-        else alert("Error: The url you entered is not a valid Image url.");
+        else
+            alert(
+                "Error: Your image can not be updated until you enter a valid image url."
+            );
 
         return false;
+    };
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTextLength(1000 - e.currentTarget.value.length);
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         e.stopPropagation();
-        if (props.match.params.id === undefined) postFunc();
+        if (e.currentTarget.checkValidity() === true)
+            if (props.match.params.id === undefined) postFunc();
+
+        isValidated();
     };
 
     let chirpForm = () => {
@@ -142,18 +168,24 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
             <Card className="text-center shadow-lg col-12 col-sm-10 col-lg-8 p-0">
                 <Form
                     noValidate
+                    validated={validated}
                     onSubmit={handleSubmit}
                     id={"chirp_form"}
                     className={"m-0"}
                 >
+                    <Form.Text
+                        className={"font-italic small m-0"}
+                        id={"required_warning"}
+                        muted
+                    >
+                        ( <span className={"required"}></span> Indicates required )
+                    </Form.Text>
                     <Card.Header className={"w-100 row justify-content-center m-0"}>
                         <Form.Group className={"my-2 col-12"}>
-                            <Form.Label>
-                                <b>{
-                                    props.match.params.id === undefined
-                                        ? "Title"
-                                        : "Edit Title"
-                                }</b>
+                            <Form.Label className={"required"}>
+                                <b>
+                                    {props.match.params.id === undefined ? "Title" : "Edit Title"}
+                                </b>
                             </Form.Label>
                             <OverlayTrigger
                                 placement="bottom"
@@ -168,10 +200,14 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
                                     defaultValue={
                                         props.match.params.id === undefined ? "" : chirp.header
                                     }
+                                    maxLength={40}
                                     required
                                     autoFocus
                                 />
                             </OverlayTrigger>
+                            <Form.Control.Feedback type="invalid">
+                                Title must not be blank
+                            </Form.Control.Feedback>
                         </Form.Group>
                     </Card.Header>
                     <Card.Body className={"row w-100 justify-content-center m-0"}>
@@ -192,11 +228,11 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
                         <Col className={" my-4 order-2"} xs={12} md={10}>
                             <Form.Group className={"my-2 w-100"}>
                                 <Form.Label>
-                                    <b>{
-                                        props.match.params.id === undefined
+                                    <b>
+                                        {props.match.params.id === undefined
                                             ? "Image Url"
-                                            : "Edit Image Url"
-                                    }</b>
+                                            : "Edit Image Url"}
+                                    </b>
                                 </Form.Label>
                                 <InputGroup className={"shadow-sm"}>
                                     <OverlayTrigger
@@ -230,12 +266,12 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
 
                         <Col className={"my-2 order-3 "} xs={12} md={10}>
                             <Form.Group>
-                                <Form.Label>
-                                    <b>{
-                                        props.match.params.id === undefined
+                                <Form.Label className={"required"}>
+                                    <b>
+                                        {props.match.params.id === undefined
                                             ? "Message"
-                                            : "Edit Message"
-                                    }</b>
+                                            : "Edit Message"}
+                                    </b>
                                 </Form.Label>
                                 <OverlayTrigger
                                     placement="bottom"
@@ -247,11 +283,20 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
                                         defaultValue={
                                             props.match.params.id === undefined ? "" : chirp.message
                                         }
+                                        onChange={handleChange}
                                         name={"message"}
                                         className={"shadow-sm"}
                                         id={"message"}
+                                        maxLength={1000}
+                                        required
                                     />
                                 </OverlayTrigger>
+                                <Form.Text className={"font-italic small text-left"} muted>
+                                    You have {textLength} characters left.
+                                </Form.Text>
+                                <Form.Control.Feedback type="invalid" className={"text-left"}>
+                                    Message must not be blank
+                                </Form.Control.Feedback>
                             </Form.Group>
                         </Col>
                     </Card.Body>
@@ -272,6 +317,8 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
                         ) : (
                             <>
                                 <ModalConfirmation
+                                    validate_form={isValidated}
+                                    form_element={formElement}
                                     chirp_obj={chirpForm}
                                     mod_obj={modalText}
                                     location={props.location}
