@@ -3,6 +3,13 @@
   min-height: 100vh;
   background-color: #AFEEEE;
 }
+#required_warning{
+background-color: rgba(0, 0, 0, 0.03);
+}
+.required:after {
+  content:" *";
+  color: red;
+}
 .display-img{
   height: 250px;
 }
