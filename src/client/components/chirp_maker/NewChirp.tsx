@@ -125,12 +125,20 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTextLength(1000 - e.currentTarget.value.length);
     };
+    const findInvalid = () => {
+        $(document).ready(function () {
+            $('.form-control:invalid')[0].focus();
+        });
+    }
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         e.stopPropagation();
-        if (e.currentTarget.checkValidity() === true)
+        if (e.currentTarget.checkValidity() === true) {
             if (props.match.params.id === undefined) postFunc();
+        }
+        else
+            findInvalid();
 
         isValidated();
     };
@@ -317,6 +325,7 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
                         ) : (
                             <>
                                 <ModalConfirmation
+                                    invalid={findInvalid}
                                     validate_form={isValidated}
                                     form_element={formElement}
                                     chirp_obj={chirpForm}
