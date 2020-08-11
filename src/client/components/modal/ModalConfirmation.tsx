@@ -6,6 +6,8 @@ import { RouteComponentProps } from "react-router-dom";
 import { useState } from "react";
 
 export interface ModalProps extends RouteComponentProps<{ id: string }> {
+    validate_form: any;
+    form_element: HTMLFormElement;
     mod_obj: ModalObj[];
     chirp_obj: any;
 }
@@ -16,6 +18,11 @@ const ModalConfirmation: React.FC<ModalProps> = (props) => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     let complete = () => props.history.push("/");
+    const handleSubmit = () => {
+        if (props.form_element.checkValidity() === true) updateChirp();
+
+        props.validate_form();
+    };
     let updateChirp = async () => {
         let formData: any = props.chirp_obj();
         try {
@@ -110,8 +117,10 @@ const ModalConfirmation: React.FC<ModalProps> = (props) => {
                             className="shadow-sm w-100"
                             variant="success"
                             onClick={() => {
-                                if (option) updateChirp();
-                                else deleteChirp();
+                                if (option) {
+                                    handleSubmit();
+                                    handleClose();
+                                } else deleteChirp();
                             }}
                         >
                             Yes
