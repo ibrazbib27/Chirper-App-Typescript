@@ -74,19 +74,18 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
     ) as HTMLFormElement;
     const [textLength, setTextLength] = useState(1000);
     $(document).ready(function () {
-        $("#message").val().toString();
-        if (props.match.params.id) {
-            setTextLength(1000 - $("#message").val().toString().length);
-            setCharChange(true);
-        }
 
-        if (window.location.pathname === "/chirp/add") {
-            if (charChange === true) {
-                $("#message").val("");
+        if (window.location.pathname === "/chirp/add"){
+            if(charChange === true) {
+                $("#title").val('');
+                $("#message").val('');
                 setTextLength(1000);
                 setCharChange(false);
             }
         }
+        else
+            setCharChange(true);
+
     });
 
     let getChirp = async () => {
@@ -96,6 +95,7 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
             });
             let chirpMore = await res.json();
             let myChirp = JSON.parse(JSON.stringify(chirpMore));
+            setTextLength(1000 - myChirp.message.length);
             setChirp({
                 id: props.match.params.id,
                 header: myChirp.header,
@@ -109,6 +109,7 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
     };
     useEffect(() => {
         if (props.match.params.id) getChirp();
+
     }, []);
 
     let handleUpload = () => {
@@ -308,6 +309,7 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
                                     />
                                 </OverlayTrigger>
                                 <Form.Text className={"font-italic small text-left"} muted>
+
                                     You have {textLength} characters left.
                                 </Form.Text>
                                 <Form.Control.Feedback type="invalid" className={"text-left"}>
