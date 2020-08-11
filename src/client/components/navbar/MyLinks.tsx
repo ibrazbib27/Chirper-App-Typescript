@@ -22,7 +22,7 @@ const MyLinks: React.FC<LinksProps> = (props) => {
             </Nav.Link>
 
             <Nav.Link as={Link} className="nav-color" to={"/chirp/add"} eventKey="3">
-                Add New Chirper
+                Add New Chirp
             </Nav.Link>
         </>
     );
