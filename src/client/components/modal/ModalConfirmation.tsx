@@ -4,8 +4,10 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { RouteComponentProps } from "react-router-dom";
 import { useState } from "react";
+import * as $ from "jquery";
 
 export interface ModalProps extends RouteComponentProps<{ id: string }> {
+    invalid: any;
     validate_form: any;
     form_element: HTMLFormElement;
     mod_obj: ModalObj[];
@@ -19,9 +21,13 @@ const ModalConfirmation: React.FC<ModalProps> = (props) => {
     const handleShow = () => setShow(true);
     let complete = () => props.history.push("/");
     const handleSubmit = () => {
+
         if (props.form_element.checkValidity() === true) updateChirp();
+        else setTimeout(props.invalid, 200);
 
         props.validate_form();
+        return false;
+
     };
     let updateChirp = async () => {
         let formData: any = props.chirp_obj();
@@ -118,8 +124,8 @@ const ModalConfirmation: React.FC<ModalProps> = (props) => {
                             variant="success"
                             onClick={() => {
                                 if (option) {
-                                    handleSubmit();
                                     handleClose();
+                                    handleSubmit();
                                 } else deleteChirp();
                             }}
                         >
