@@ -207,7 +207,7 @@ const NewChirp: React.FC<NewChirpProps> = (props) => {
                                     autoFocus
                                 />
                             </OverlayTrigger>
-                            <Form.Control.Feedback type="invalid">
+                            <Form.Control.Feedback className={"text-left"} type="invalid">
                                 Title must not be blank
                             </Form.Control.Feedback>
                         </Form.Group>
